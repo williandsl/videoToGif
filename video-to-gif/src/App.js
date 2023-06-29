@@ -5,12 +5,20 @@ import './App.css';
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [videoSrc, setVideoSrc] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
     const videoUrl = URL.createObjectURL(file);
     setVideoSrc(videoUrl);
     setVideoUploaded(true);
+  };
+
+  const convertToGif = () => {
+    // Lógica para converter o vídeo em GIF
+    // Aqui você pode implementar a lógica para converter o vídeo em GIF
+    // por exemplo, usando uma biblioteca de conversão de vídeo para GIF
+    setShowAlert(true);
   };
 
   return (
@@ -30,6 +38,8 @@ function App() {
             <video id="uploaded-video" controls>
               <source src={videoSrc} type="video/mp4" />
             </video>
+            <button onClick={convertToGif}>Converter em GIF</button>
+            {showAlert && <p>Ok, botão clicado</p>}
           </div>
         )}
       </header>
