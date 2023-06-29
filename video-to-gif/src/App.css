@@ -12,6 +12,19 @@
   width: 100%;
   height: auto;
 }
+.progress-bar {
+  max-width: 480px; /* Defina a largura máxima desejada */
+  width: 100%;
+  margin: 0 auto; /* Centraliza horizontalmente */
+  margin-top: 20px; /* Ajuste a margem superior conforme necessário */
+}
+
+.gif-container {
+  max-width: 480px; /* Defina a largura máxima desejada */
+  width: 100%;
+  margin: 0 auto; /* Centraliza horizontalmente */
+  margin-top: 20px; /* Ajuste a margem superior conforme necessário */
+}
 
 
 .App-logo {
