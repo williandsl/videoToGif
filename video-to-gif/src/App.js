@@ -7,43 +7,63 @@ function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [gifUrl, setGifUrl] = useState('');
-  const [progress, setProgress] = useState(0);
+  const [converting, setConverting] = useState(false);
+  const [conversionProgress, setConversionProgress] = useState(0);
+  const [converted, setConverted] = useState(false);
+  const [totalFrames, setTotalFrames] = useState(0);
+  const [currentFrame, setCurrentFrame] = useState(0);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-    setVideoFile(file);
-    setVideoUploaded(true);
+    if (file) {
+      resetState(); // Redefine os estados antes de selecionar um novo arquivo
+      setVideoFile(file);
+      setVideoUploaded(true);
+    }
   };
 
   const convertToGif = () => {
+    setConverting(true);
     const video = document.createElement('video');
     video.src = URL.createObjectURL(videoFile);
+    video.onerror = () => {
+      console.error('Erro ao carregar o vídeo');
+    };
 
-    video.onloadedmetadata = () => {
-      const videoDuration = video.duration;
+    video.onloadeddata = () => {
+      video.onseeked = () => {
+        const videoDuration = video.duration;
+        const frames = Math.ceil(videoDuration * 10); // 10 frames por segundo
 
-      gifshot.createGIF(
-        {
-          video: [videoFile],
-          numFrames: 10,
-          frameDuration: videoDuration / 10,
-          gifWidth: 400,
-          gifHeight: 400, // video.videoHeight,
-          sampleInterval: 1,
-          progressCallback: (currentFrame, totalFrames) => {
-            const progress = Math.round((currentFrame / totalFrames) * 100);
-            setProgress(progress);
+        setTotalFrames(frames);
+        setCurrentFrame(0);
+
+        gifshot.createGIF(
+          {
+            video: [videoFile],
+            numFrames: frames,
+            frameDuration: videoDuration / frames,
+            gifWidth: 800,
+            gifHeight: 800,
+            sampleInterval: 10,
+            progressCallback: (currentFrame) => {
+              setCurrentFrame(currentFrame * 120);
+            },
           },
-        },
-        (obj) => {
-          if (!obj.error) {
-            const gifUrl = obj.image;
-            setGifUrl(gifUrl);
-          } else {
-            console.error('Erro ao converter o vídeo em GIF:', obj.error);
+          (obj) => {
+            if (!obj.error) {
+              const gifUrl = obj.image;
+              setGifUrl(gifUrl);
+              setConverted(true);
+            } else {
+              console.error('Erro ao converter o vídeo em GIF:', obj.error);
+            }
+            setConverting(false);
           }
-        }
-      );
+        );
+      };
+
+      video.currentTime = video.duration;
     };
   };
 
@@ -56,13 +76,40 @@ function App() {
     }
   };
 
+  const resetState = () => {
+    setVideoUploaded(false);
+    setVideoFile(null);
+    setGifUrl('');
+    setConversionProgress(0);
+    setConverted(false);
+  };
+
   useEffect(() => {
-    if (progress === 100) {
-      setTimeout(() => {
-        setProgress(0);
-      }, 1000);
+    if (converting) {
+      const progress = (currentFrame / totalFrames) * 100;
+      setConversionProgress(progress);
+
+      if (progress === 90) {
+        setConversionProgress(91);
+        const interval = setInterval(() => {
+          setConversionProgress((prevProgress) => {
+            if (prevProgress < 100) {
+              return prevProgress + 1;
+            } else {
+              clearInterval(interval);
+              return prevProgress;
+            }
+          });
+        }, 3000);
+      }
     }
-  }, [progress]);
+  }, [converting, currentFrame, totalFrames]);
+
+  useEffect(() => {
+    if (converted) {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+  }, [converted]);
 
   return (
     <div className="App">
@@ -72,21 +119,30 @@ function App() {
         <input type="file" accept="video/*" onChange={handleFileUpload} />
         {videoUploaded && (
           <div className="video-container">
+            {converting && (
+              <div className="progress-bar">
+                {conversionProgress < 100
+                  ? `Convertendo... ${conversionProgress.toFixed(1)}%`
+                  : 'Arquivo convertido, Gerando arquivo abaixo'}
+              </div>
+            )}
+  
+            {!converting && !converted && (
+              <p>
+                <button onClick={convertToGif} disabled={converting}>
+                  Converter em GIF
+                </button>
+              </p>
+            )}
             <video controls>
               <source src={URL.createObjectURL(videoFile)} type="video/mp4" />
             </video>
-            <button onClick={convertToGif}>Converter em GIF</button>
-            {progress > 0 && progress < 100 && (
-              <div className="progress-bar">
-                <div
-                  className="progress"
-                  style={{ width: `${progress}%` }}
-                ></div>
-                <span>{`${progress}%`}</span>
-              </div>
-            )}
-            {gifUrl && (
+  
+        
+  
+            {converted && (
               <div className="gif-container">
+                <p>Arquivo convertido</p>
                 <img src={gifUrl} alt="GIF convertido" width="400" height="400" />
                 <p>
                   <button onClick={handleDownload}>Baixar GIF</button>
@@ -99,6 +155,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;

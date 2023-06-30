@@ -19,6 +19,17 @@
   margin-top: 20px; /* Ajuste a margem superior conforme necessário */
 }
 
+.status-bar {
+  height: 10px;
+  background-color: #ccc;
+}
+
+.status-bar-inner {
+  height: 100%;
+  background-color: #007bff;
+}
+
+
 .gif-container {
   max-width: 480px; /* Defina a largura máxima desejada */
   width: 100%;
