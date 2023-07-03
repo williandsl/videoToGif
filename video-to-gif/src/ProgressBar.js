@@ -5,7 +5,7 @@ const ProgressBar = ({ progress, showGeneratingText, blinking }) => {
     <span>
       {showGeneratingText ? (
         <span className={`blinking-text ${blinking ? 'highlight' : ''}`}>
-          Gerando arquivo, aguarde alguns segundos...
+          Gerando arquivo, aguarde ...
         </span>
       ) : (
         `Convertendo... ${progress.toFixed(1)}%`

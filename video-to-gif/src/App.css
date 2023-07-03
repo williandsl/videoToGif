@@ -1,22 +1,19 @@
 .App {
   text-align: center;
 }
-.video-container {
-  max-width: 480px; /* Defina a largura máxima desejada */
+
+.video-container,
+.progress-bar,
+.gif-container {
+  max-width: 480px;
   width: 100%;
-  margin: 0 auto; /* Centraliza horizontalmente */
-  margin-top: 20px; /* Ajuste a margem superior conforme necessário */
+  margin: 0 auto;
+  margin-top: 20px;
 }
 
 .video-container video {
   width: 100%;
   height: auto;
-}
-.progress-bar {
-  max-width: 480px; /* Defina a largura máxima desejada */
-  width: 100%;
-  margin: 0 auto; /* Centraliza horizontalmente */
-  margin-top: 20px; /* Ajuste a margem superior conforme necessário */
 }
 
 .status-bar {
@@ -28,15 +25,6 @@
   height: 100%;
   background-color: #007bff;
 }
-
-
-.gif-container {
-  max-width: 480px; /* Defina a largura máxima desejada */
-  width: 100%;
-  margin: 0 auto; /* Centraliza horizontalmente */
-  margin-top: 20px; /* Ajuste a margem superior conforme necessário */
-}
-
 
 .App-logo {
   height: 40vmin;
@@ -56,37 +44,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 18px;
   color: white;
+  padding: 20px;
+  text-align: center;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes blink {
-  0% {
-    visibility: hidden;
-  }
-  50% {
-    visibility: visible;
-  }
-  100% {
-    visibility: hidden;
-  }
-}
-
-.blinking-text {
-  animation: blink 1s infinite;
+.App-header h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
 .blinking-text {
@@ -107,4 +73,12 @@
 
 .highlight {
   color: rgb(51, 0, 255);
+}
+
+.gif-container p {
+  margin-bottom: 10px;
+}
+
+.gif-container img {
+  margin-top: 10px;
 }

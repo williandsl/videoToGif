@@ -5,6 +5,7 @@ import FileUploader from './FileUploader';
 import VideoPlayer from './VideoPlayer';
 import ProgressBar from './ProgressBar';
 import ConvertedGif from './ConvertedGif';
+import logo from './logo.svg';
 
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -146,7 +147,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Converter vídeo em .GIF</p>
+        <img src={logo} className="App-logo" alt="logo" />
+        <h1>Converter vídeo em .GIF</h1>
         <FileUploader onFileUpload={handleFileUpload} />
         {videoUploaded && (
           <div className="video-container">
@@ -159,7 +161,7 @@ function App() {
                     blinking={blinking}
                   />
                 ) : (
-                  'Arquivo convertido, gerando arquivo abaixo'
+                  <p>Arquivo convertido, gerando arquivo abaixo</p>
                 )}
               </div>
             )}
