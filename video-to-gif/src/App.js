@@ -21,6 +21,9 @@ function App() {
       setVideoUploaded(true);
     }
   };
+  
+
+  
 
   const convertToGif = () => {
     setConverting(true);
@@ -34,7 +37,9 @@ function App() {
       video.onseeked = () => {
         const videoDuration = video.duration;
         const frames = Math.ceil(videoDuration * 10); // 10 frames por segundo
-
+        const videoWidth = video.videoWidth;
+        const videoHeight = video.videoHeight;
+        
         setTotalFrames(frames);
         setCurrentFrame(0);
 
@@ -43,8 +48,8 @@ function App() {
             video: [videoFile],
             numFrames: frames,
             frameDuration: videoDuration / frames,
-            gifWidth: 800,
-            gifHeight: 800,
+            gifWidth: videoWidth,
+            gifHeight: videoHeight,
             sampleInterval: 10,
             progressCallback: (currentFrame) => {
               setCurrentFrame(currentFrame * 120);
