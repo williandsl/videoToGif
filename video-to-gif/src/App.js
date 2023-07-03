@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import gifshot from 'gifshot';
+import FileUploader from './FileUploader';
+import VideoPlayer from './VideoPlayer';
+import ProgressBar from './ProgressBar';
+import ConvertedGif from './ConvertedGif';
 
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -16,14 +19,10 @@ function App() {
   const [showGeneratingText, setShowGeneratingText] = useState(false);
   const videoRef = useRef(null); // Referência para o elemento <video>
 
-  const handleFileUpload = (event) => {
+  const handleFileUpload = (file) => {
     resetState();
-
-    const file = event.target.files[0];
-    if (file) {
-      setVideoFile(file);
-      setVideoUploaded(true);
-    }
+    setVideoFile(file);
+    setVideoUploaded(true);
   };
 
   const convertToGif = () => {
@@ -147,24 +146,18 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>Converter vídeo em .GIF</p>
-        <input type="file" accept="video/*" onChange={handleFileUpload} />
+        <FileUploader onFileUpload={handleFileUpload} />
         {videoUploaded && (
           <div className="video-container">
             {converting && (
               <div className="progress-bar">
                 {conversionProgress < 100 ? (
-                  <span>
-                    {showGeneratingText ? (
-                      <span className={`blinking-text ${blinking ? 'highlight' : ''}`}>
-                        Gerando arquivo, aguarde alguns segundos...
-                      </span>
-                    ) : (
-                      `Convertendo... ${conversionProgress.toFixed(1)}%`
-                    )}
-                    <progress value={conversionProgress} max="100" />
-                  </span>
+                  <ProgressBar
+                    progress={conversionProgress}
+                    showGeneratingText={showGeneratingText}
+                    blinking={blinking}
+                  />
                 ) : (
                   'Arquivo convertido, gerando arquivo abaixo'
                 )}
@@ -178,18 +171,10 @@ function App() {
                 </button>
               </p>
             )}
-            <video ref={videoRef} key={videoFile ? videoFile.name : ''} controls>
-              <source src={URL.createObjectURL(videoFile)} type="video/mp4" />
-            </video>
+            <VideoPlayer ref={videoRef} videoFile={videoFile} />
 
             {converted && (
-              <div className="gif-container">
-                <p>Arquivo convertido, clique em Baixar GIF para</p>
-                <img src={gifUrl} alt="GIF convertido" width="200" height="200" />
-                <p>
-                  <button onClick={handleDownload}>Baixar GIF</button>
-                </p>
-              </div>
+              <ConvertedGif gifUrl={gifUrl} onDownload={handleDownload} />
             )}
           </div>
         )}
