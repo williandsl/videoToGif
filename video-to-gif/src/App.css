@@ -72,3 +72,39 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes blink {
+  0% {
+    visibility: hidden;
+  }
+  50% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+.blinking-text {
+  animation: blink 1s infinite;
+}
+
+.blinking-text {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.highlight {
+  color: rgb(51, 0, 255);
+}
