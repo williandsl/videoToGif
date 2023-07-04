@@ -5,7 +5,7 @@ import FileUploader from './FileUploader';
 import VideoPlayer from './VideoPlayer';
 import ProgressBar from './ProgressBar';
 import ConvertedGif from './ConvertedGif';
-import logo from './logo.svg';
+import logo from './conv.png';
 
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
