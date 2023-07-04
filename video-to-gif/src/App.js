@@ -34,10 +34,8 @@ function App() {
       video.onseeked = () => {
         const videoDuration = video.duration;
         const frames = Math.ceil(videoDuration * 10); // 10 frames por segundo
-
         setTotalFrames(frames);
         setCurrentFrame(0);
-
         gifshot.createGIF(
           {
             video: [videoFile],
@@ -62,7 +60,6 @@ function App() {
           }
         );
       };
-
       video.currentTime = video.duration;
     };
   };
@@ -83,12 +80,10 @@ function App() {
     setConversionProgress(0);
     setConverted(false);
   };
-
   useEffect(() => {
     if (converting) {
       const progress = (currentFrame / totalFrames) * 100;
       setConversionProgress(progress);
-
       if (progress === 90) {
         setConversionProgress(91);
         const interval = setInterval(() => {
@@ -104,13 +99,11 @@ function App() {
       }
     }
   }, [converting, currentFrame, totalFrames]);
-
   useEffect(() => {
     if (converted) {
       window.scrollTo(0, document.body.scrollHeight);
     }
   }, [converted]);
-
   return (
     <div className="App">
       <header className="App-header">
@@ -126,7 +119,6 @@ function App() {
                   : 'Arquivo convertido, Gerando arquivo abaixo'}
               </div>
             )}
-  
             {!converting && !converted && (
               <p>
                 <button onClick={convertToGif} disabled={converting}>
@@ -137,9 +129,6 @@ function App() {
             <video controls>
               <source src={URL.createObjectURL(videoFile)} type="video/mp4" />
             </video>
-  
-        
-  
             {converted && (
               <div className="gif-container">
                 <p>Arquivo convertido</p>
@@ -155,5 +144,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
