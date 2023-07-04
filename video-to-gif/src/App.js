@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import gifshot from 'gifshot';
+import FileUploader from './FileUploader';
+import VideoPlayer from './VideoPlayer';
+import ProgressBar from './ProgressBar';
+import ConvertedGif from './ConvertedGif';
+import logo from './conv.png';
 
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -12,18 +16,19 @@ function App() {
   const [converted, setConverted] = useState(false);
   const [totalFrames, setTotalFrames] = useState(0);
   const [currentFrame, setCurrentFrame] = useState(0);
+  const [blinking, setBlinking] = useState(false);
+  const [showGeneratingText, setShowGeneratingText] = useState(false);
+  const videoRef = useRef(null); // Referência para o elemento <video>
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      resetState(); // Redefine os estados antes de selecionar um novo arquivo
-      setVideoFile(file);
-      setVideoUploaded(true);
-    }
+  const handleFileUpload = (file) => {
+    resetState();
+    setVideoFile(file);
+    setVideoUploaded(true);
   };
 
   const convertToGif = () => {
     setConverting(true);
+    setShowGeneratingText(true);
     const video = document.createElement('video');
     video.src = URL.createObjectURL(videoFile);
     video.onerror = () => {
@@ -33,7 +38,9 @@ function App() {
     video.onloadeddata = () => {
       video.onseeked = () => {
         const videoDuration = video.duration;
-        const frames = Math.ceil(videoDuration * 10); // 10 frames por segundo
+        const frames = Math.ceil(videoDuration * 10);
+        const videoWidth = video.videoWidth;
+        const videoHeight = video.videoHeight;
 
         setTotalFrames(frames);
         setCurrentFrame(0);
@@ -43,8 +50,8 @@ function App() {
             video: [videoFile],
             numFrames: frames,
             frameDuration: videoDuration / frames,
-            gifWidth: 800,
-            gifHeight: 800,
+            gifWidth: videoWidth,
+            gifHeight: videoHeight,
             sampleInterval: 10,
             progressCallback: (currentFrame) => {
               setCurrentFrame(currentFrame * 120);
@@ -82,12 +89,20 @@ function App() {
     setGifUrl('');
     setConversionProgress(0);
     setConverted(false);
+    setTotalFrames(0);
+    setCurrentFrame(0);
+    setBlinking(false);
+    setShowGeneratingText(false);
   };
 
   useEffect(() => {
     if (converting) {
       const progress = (currentFrame / totalFrames) * 100;
       setConversionProgress(progress);
+
+      if (progress >= 70) {
+        setShowGeneratingText(true);
+      }
 
       if (progress === 90) {
         setConversionProgress(91);
@@ -111,22 +126,46 @@ function App() {
     }
   }, [converted]);
 
+  useEffect(() => {
+    if (conversionProgress === 90) {
+      const blinkInterval = setInterval(() => {
+        setBlinking((prevState) => !prevState);
+      }, 500);
+      return () => clearInterval(blinkInterval);
+    }
+  }, [conversionProgress]);
+
+  useEffect(() => {
+    if (showGeneratingText) {
+      const blinkInterval = setInterval(() => {
+        setBlinking((prevState) => !prevState);
+      }, 500);
+      return () => clearInterval(blinkInterval);
+    }
+  }, [showGeneratingText]);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>Converter vídeo em .GIF</p>
-        <input type="file" accept="video/*" onChange={handleFileUpload} />
+        <h1>Converter vídeo em .GIF</h1>
+        <FileUploader onFileUpload={handleFileUpload} />
         {videoUploaded && (
           <div className="video-container">
             {converting && (
               <div className="progress-bar">
-                {conversionProgress < 100
-                  ? `Convertendo... ${conversionProgress.toFixed(1)}%`
-                  : 'Arquivo convertido, Gerando arquivo abaixo'}
+                {conversionProgress < 100 ? (
+                  <ProgressBar
+                    progress={conversionProgress}
+                    showGeneratingText={showGeneratingText}
+                    blinking={blinking}
+                  />
+                ) : (
+                  <p>Arquivo convertido, gerando arquivo abaixo</p>
+                )}
               </div>
             )}
-  
+
             {!converting && !converted && (
               <p>
                 <button onClick={convertToGif} disabled={converting}>
@@ -134,20 +173,10 @@ function App() {
                 </button>
               </p>
             )}
-            <video controls>
-              <source src={URL.createObjectURL(videoFile)} type="video/mp4" />
-            </video>
-  
-        
-  
+            <VideoPlayer ref={videoRef} videoFile={videoFile} />
+
             {converted && (
-              <div className="gif-container">
-                <p>Arquivo convertido</p>
-                <img src={gifUrl} alt="GIF convertido" width="400" height="400" />
-                <p>
-                  <button onClick={handleDownload}>Baixar GIF</button>
-                </p>
-              </div>
+              <ConvertedGif gifUrl={gifUrl} onDownload={handleDownload} />
             )}
           </div>
         )}
