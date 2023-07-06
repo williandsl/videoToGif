@@ -174,7 +174,7 @@ function App() {
                   />
                 ) : (
                 <span className={`blinking-text ${blinking ? 'highlight' : ''}`}>
-                  Arquivo convertido, aguarde ...
+                  Gerando arquivo convertido, aguarde ...
                 </span>                )}
               </div>
             )}
