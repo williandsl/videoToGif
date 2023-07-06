@@ -11,6 +11,15 @@
   margin-top: 20px;
 }
 
+.App-assintaura-logo {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+
 .video-container video {
   width: 100%;
   height: auto;
@@ -23,10 +32,12 @@
 
 .status-bar-inner {
   height: 100%;
-  background-color: #007bff;
+  background-color: #0099ff;
 }
 
 .App-logo {
+  max-width: 480px;
+  max-height: 120px;
   height: 40vmin;
   pointer-events: none;
 }
@@ -72,7 +83,7 @@
 }
 
 .highlight {
-  color: rgb(51, 0, 255);
+  color: #0099ff;
 }
 
 .gif-container p {
