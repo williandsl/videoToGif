@@ -161,7 +161,7 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <img src={assintauraLogo} className="App-assintaura-logo" alt="assintaura logo" />
         <h1>Converter vídeo em .GIF</h1>
-        <FileUploader onFileUpload={handleFileUpload} />
+        <FileUploader onFileUpload={handleFileUpload} converting={converting} />
         {videoUploaded && (
           <div className="video-container">
             {converting && (
