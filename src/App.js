@@ -6,6 +6,8 @@ import VideoPlayer from './VideoPlayer';
 import ProgressBar from './ProgressBar';
 import ConvertedGif from './ConvertedGif';
 import logo from './conv.png';
+import assintauraLogo from './assinatura.png';
+
 
 function App() {
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -77,11 +79,20 @@ function App() {
   const handleDownload = () => {
     if (gifUrl) {
       const link = document.createElement('a');
+      const currentDate = new Date();
+      const currentDay = currentDate.getDate();
+      const currentMonth = currentDate.getMonth() + 1; // Os meses são indexados a partir de 0
+      const currentYear = currentDate.getFullYear();
+      const currentMinute = currentDate.getMinutes();
+      const currentSecond = currentDate.getSeconds();
+      const filename = `GifGenerated_${currentDay}-${currentMonth}-${currentYear}_${currentMinute}${currentSecond}.gif`;
       link.href = gifUrl;
-      link.download = 'video.gif';
+      link.download = filename;
       link.click();
     }
   };
+  
+  
 
   const resetState = () => {
     setVideoUploaded(false);
@@ -148,8 +159,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <img src={assintauraLogo} className="App-assintaura-logo" alt="assintaura logo" />
         <h1>Converter vídeo em .GIF</h1>
-        <FileUploader onFileUpload={handleFileUpload} />
+        <FileUploader onFileUpload={handleFileUpload} converting={converting} />
         {videoUploaded && (
           <div className="video-container">
             {converting && (
@@ -161,8 +173,9 @@ function App() {
                     blinking={blinking}
                   />
                 ) : (
-                  <p>Arquivo convertido, gerando arquivo abaixo</p>
-                )}
+                <span className={`blinking-text ${blinking ? 'highlight' : ''}`}>
+                  Gerando arquivo convertido, aguarde ...
+                </span>                )}
               </div>
             )}
 
