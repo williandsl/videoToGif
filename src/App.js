@@ -21,12 +21,31 @@ function App() {
   const [blinking, setBlinking] = useState(false);
   const [showGeneratingText, setShowGeneratingText] = useState(false);
   const videoRef = useRef(null); // Referência para o elemento <video>
+  const [videoDurationError, setVideoDurationError] = useState(false);
+  const [disableConversion, setDisableConversion] = useState(false);
+
 
   const handleFileUpload = (file) => {
     resetState();
     setVideoFile(file);
     setVideoUploaded(true);
+  
+    const video = document.createElement('video');
+    video.src = URL.createObjectURL(file);
+  
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      if (duration > 15) {
+        setVideoDurationError(true);
+        setDisableConversion(true); // Bloquear o botão de conversão
+      } else {
+        setVideoDurationError(false);
+        setDisableConversion(false); // Desbloquear o botão de conversão
+      }
+    };
   };
+  
+  
 
   const convertToGif = () => {
     setConverting(true);
@@ -161,6 +180,12 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <img src={assintauraLogo} className="App-assintaura-logo" alt="assintaura logo" />
         <h1>Converter vídeo em .GIF</h1>
+        {videoUploaded && videoDurationError && (
+  <div className="video-duration-error">
+   <p> O vídeo deve ter no máximo 15 segundos de duração. </p>
+  </div>
+)}
+
         <FileUploader onFileUpload={handleFileUpload} converting={converting} />
         {videoUploaded && (
           <div className="video-container">
@@ -181,9 +206,10 @@ function App() {
 
             {!converting && !converted && (
               <p>
-                <button onClick={convertToGif} disabled={converting}>
-                  Converter em GIF
-                </button>
+ <button onClick={convertToGif} disabled={converting || disableConversion}>
+  Converter em GIF
+</button>
+
               </p>
             )}
             <VideoPlayer ref={videoRef} videoFile={videoFile} />
